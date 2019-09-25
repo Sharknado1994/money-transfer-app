@@ -1,5 +1,8 @@
 package com.revolut.review.rest;
 
+import com.revolut.review.model.OperationResult;
+import com.revolut.review.service.MoneyTransferService;
+import com.revolut.review.service.MoneyTransferServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.AsyncContext;
@@ -13,6 +16,7 @@ import java.util.logging.Logger;
 @Slf4j
 public class MoneyTransferServlet extends HttpServlet {
     private static Logger LOGGER = Logger.getLogger(MoneyTransferServlet.class.getName());
+    private final MoneyTransferService moneyTransferService = new MoneyTransferServiceImpl();
 
     protected void doGet(
             HttpServletRequest request, final HttpServletResponse response) {
@@ -24,6 +28,7 @@ public class MoneyTransferServlet extends HttpServlet {
             final String value = request.getParameter("value");
 
             try {
+                OperationResult result = moneyTransferService.executeCharge(sourceAccount, targetAccount, Double.parseDouble(value));
                 response.getWriter().println(sourceAccount + " " + targetAccount + " " + value);
             } catch (IOException e) {
                 LOGGER.severe("Error " + e.getMessage());
