@@ -1,0 +1,13 @@
+# Maven
+.mvn/
+target/
+
+# IDEA
+.idea/
+*.iml
+
+# logs 
+*.log
+
+# misc
+*.gz
