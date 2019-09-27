@@ -32,12 +32,6 @@
             <artifactId>jetty-servlet</artifactId>
             <version>${jetty.server.version}</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/net.sf.ehcache/ehcache -->
-        <dependency>
-            <groupId>net.sf.ehcache</groupId>
-            <artifactId>ehcache</artifactId>
-            <version>${ehcache.version}</version>
-        </dependency>
     </dependencies>
 
 </project>

@@ -2,9 +2,13 @@ package com.revolut.review.service;
 
 import com.revolut.review.model.BankAccount;
 import com.revolut.review.model.OperationResult;
+import io.reactivex.Maybe;
+import reactor.core.publisher.Mono;
+
+import java.sql.SQLException;
 
 public interface MoneyTransferService {
-    OperationResult executeCharge(String src, String trg, Double value);
+    Maybe<OperationResult> executeCharge(String src, String trg, Double value) throws SQLException;
 
-    OperationResult executeWithdrawal(BankAccount src, BankAccount trg, Double value);
+    OperationResult executeWithdrawal(BankAccount src, BankAccount trg, Double value) throws Exception;
 }

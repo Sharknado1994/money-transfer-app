@@ -13,10 +13,10 @@ import java.util.Date;
 public class BankAccount {
     @DatabaseField(id = true)
     private String id;
-    @DatabaseField
+    @DatabaseField(columnName = "card_number")
     private String cardNumber;
     @DatabaseField
     private Double balance;
-    @DatabaseField
+    @DatabaseField(columnName = "last_updated_date")
     private Date lastUpdatedDate;
 }

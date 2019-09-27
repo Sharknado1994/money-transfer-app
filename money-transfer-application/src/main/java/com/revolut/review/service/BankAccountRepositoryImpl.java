@@ -1,47 +1,63 @@
 package com.revolut.review.service;
 
 import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.jdbc.JdbcConnectionSource;
-import com.j256.ormlite.support.ConnectionSource;
+import com.j256.ormlite.stmt.PreparedQuery;
+import com.j256.ormlite.stmt.QueryBuilder;
+import com.j256.ormlite.stmt.SelectArg;
+import com.j256.ormlite.stmt.Where;
+import com.revolut.review.exception.BankBusinessException;
 import com.revolut.review.model.BankAccount;
+import io.reactivex.Maybe;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import reactor.core.publisher.Mono;
+import reactor.util.function.Tuple2;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
+import javax.inject.Singleton;
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
+@Singleton
+@Slf4j
 public class BankAccountRepositoryImpl implements BankAccountRepository {
-    private static final String DB_DRIVER = "org.h2.Driver";
-    private static final String DB_CONNECTION = "jdbc:h2:mem:banking";
-    private static final String DB_USER = "admin";
-    private static final String DB_PASSWORD = "admin";
-    private static ConnectionSource connectionSource
-            =  new JdbcConnectionSource();
+    private final Dao<BankAccount, String> accountDao;
 
-
-    @Override
-    public BankAccount getAccountByCardNum(String cardNum) {
-        return null;
+    public BankAccountRepositoryImpl() {
+        this.accountDao = null;
     }
 
     @Override
-    public BankAccount updateAccount(BankAccount account) {
-        return null;
+    public BankAccount getAccountByCardNum(String cardNum) throws SQLException, BankBusinessException {
+        final PreparedQuery<BankAccount> preparedQuery = prepareSelectForCardNum(cardNum);
+        log.trace("Executing statement {}", preparedQuery);
+        List<BankAccount> accounts = accountDao.query(preparedQuery);
+        if (accounts.isEmpty()) {
+            throw new BankBusinessException("CardNum " + cardNum + " is not valid");
+        }
+        return accounts.iterator().next();
     }
 
-    private static synchronized Connection getDBConnection() {
-        Connection dbConnection = null;
-        try {
-            Class.forName(DB_DRIVER);
-        } catch (ClassNotFoundException e) {
-            System.out.println(e.getMessage());
-        }
-        try {
-            dbConnection = DriverManager.getConnection(DB_CONNECTION, DB_USER, DB_PASSWORD);
-            return dbConnection;
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return dbConnection;
+    @Override
+    public void updateAccounts(BankAccount src, BankAccount trg) throws Exception {
+        accountDao.callBatchTasks(() -> {
+            int resultSrc = accountDao.update(src);
+            int resultTrg = accountDao.update(trg);
+            log.info("Update results [src = {}; result ={}] [trg = {}; result={}]",
+                    src.getCardNumber(), resultSrc, trg.getCardNumber(), resultTrg);
+            return "";
+        });
     }
+
+    protected PreparedQuery<BankAccount> prepareSelectForCardNum(String cardNum) throws SQLException {
+        QueryBuilder<BankAccount, String> builder = accountDao.queryBuilder();
+        Where<BankAccount, String> where = builder.where();
+        SelectArg selectArg = new SelectArg();
+        selectArg.setValue(cardNum);
+        where.eq("card_number", selectArg);
+        return builder.prepare();
+    }
+
+
 }

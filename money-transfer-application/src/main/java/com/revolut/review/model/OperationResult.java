@@ -8,6 +8,5 @@ import lombok.ToString;
 @ToString
 @Getter
 public class OperationResult {
-    private final String transactionId;
-    private final Result result;
+    private final String result;
 }

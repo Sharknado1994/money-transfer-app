@@ -1,35 +1,50 @@
 package com.revolut.review.service;
 
+import com.j256.ormlite.misc.TransactionManager;
+import com.revolut.review.exception.BankBusinessException;
 import com.revolut.review.model.BankAccount;
 import com.revolut.review.model.OperationResult;
-import com.revolut.review.model.Result;
+import io.reactivex.Maybe;
+import lombok.extern.slf4j.Slf4j;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import java.sql.SQLException;
+
+@Singleton
+@Slf4j
 public class MoneyTransferServiceImpl implements MoneyTransferService {
-    private final BankAccountRepository repository = new BankAccountRepositoryImpl();
+    private final BankAccountRepository repository;
 
-    @Override
-    public OperationResult executeCharge(String src, String trg, Double value) {
-        BankAccount cardNum_1 = repository.getAccountByCardNum(src);
-        BankAccount cardNum_2 = repository.getAccountByCardNum(trg);
-        if (value < 0) {
-            return executeWithdrawal(cardNum_2, cardNum_1, -value);
-        } else {
-            return executeWithdrawal(cardNum_1, cardNum_2, value);
-        }
+    @Inject
+    public MoneyTransferServiceImpl(BankAccountRepository repository) {
+        this.repository = repository;
     }
 
     @Override
-    public OperationResult executeWithdrawal(BankAccount src, BankAccount trg, Double value) {
+    public Maybe<OperationResult> executeCharge(String src, String trg, Double value) throws SQLException {
+        return Maybe.just(transactionLogic(src, trg, value));
+    }
+
+    protected OperationResult transactionLogic(final String src, final String trg, final Double value) throws SQLException, RuntimeException {
+        return TransactionManager.callInTransaction(H2ConnectionFactory.getConnection(), () -> {
+            log.info("Execution blocking logic for {} {} {}", src, trg, value);
+            BankAccount srcAcc = repository.getAccountByCardNum(src);
+            BankAccount trgAcc = repository.getAccountByCardNum(trg);
+            return executeWithdrawal(srcAcc, trgAcc, value);
+        });
+    }
+
+    @Override
+    public OperationResult executeWithdrawal(BankAccount src, BankAccount trg, Double value) throws Exception {
         Double srcBalance = src.getBalance();
         if (srcBalance.compareTo(value) < 0) {
-            Result result = Result.NOT_ENOUGH_MONEY;
-            return new OperationResult("1234", result);
+            throw new BankBusinessException("Not enough money on account " + src + " for charge execution");
         } else {
             src.setBalance(srcBalance - value);
             trg.setBalance(trg.getBalance() + value);
-            repository.updateAccount(src);
-            repository.updateAccount(trg);
-            return new OperationResult("1234", Result.CHARGE_DONE);
+            repository.updateAccounts(src, trg);
+            return new OperationResult("Charge from " + src.getCardNumber() + " to " + trg.getCardNumber() + " is done");
         }
     }
 }

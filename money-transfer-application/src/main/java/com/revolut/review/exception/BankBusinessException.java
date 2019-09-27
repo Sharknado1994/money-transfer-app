@@ -1,9 +1,13 @@
 package com.revolut.review.exception;
 
-public class BankBusinessException extends RuntimeException {
-    private final String message;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.ToString;
 
-    public BankBusinessException(String message) {
-        this.message = message;
-    }
+@AllArgsConstructor
+@Getter
+@ToString
+public class BankBusinessException extends RuntimeException {
+    private final String businessMessage;
+
 }
