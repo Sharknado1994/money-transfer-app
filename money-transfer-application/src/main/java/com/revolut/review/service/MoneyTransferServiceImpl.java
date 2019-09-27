@@ -30,8 +30,14 @@ public class MoneyTransferServiceImpl implements MoneyTransferService {
         return TransactionManager.callInTransaction(H2ConnectionFactory.getConnection(), () -> {
             log.info("Execution blocking logic for {} {} {}", src, trg, value);
             BankAccount srcAcc = repository.getAccountByCardNum(src);
+            long current = System.currentTimeMillis();
+            while (System.currentTimeMillis() - current < 10000) {
+                //sleep for testing
+            }
             BankAccount trgAcc = repository.getAccountByCardNum(trg);
-            return executeWithdrawal(srcAcc, trgAcc, value);
+            OperationResult result = executeWithdrawal(srcAcc, trgAcc, value);
+            log.info("Transaction is ended");
+            return result;
         });
     }
 
@@ -44,7 +50,8 @@ public class MoneyTransferServiceImpl implements MoneyTransferService {
             src.setBalance(srcBalance - value);
             trg.setBalance(trg.getBalance() + value);
             repository.updateAccounts(src, trg);
-            return new OperationResult("Charge from " + src.getCardNumber() + " to " + trg.getCardNumber() + " is done");
+            return new OperationResult("Charge from " + src.getCardNumber() + " to " + trg.getCardNumber() + " is done" +
+                    "New balances [src " + src.getBalance() + " trg " + trg.getBalance() + " ]");
         }
     }
 }
