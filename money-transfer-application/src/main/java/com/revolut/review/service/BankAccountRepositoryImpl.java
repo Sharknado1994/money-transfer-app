@@ -1,6 +1,7 @@
 package com.revolut.review.service;
 
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.SelectArg;
@@ -13,9 +14,11 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -24,8 +27,10 @@ import java.util.List;
 public class BankAccountRepositoryImpl implements BankAccountRepository {
     private final Dao<BankAccount, String> accountDao;
 
-    public BankAccountRepositoryImpl() {
-        this.accountDao = null;
+    @Inject
+    public BankAccountRepositoryImpl() throws SQLException {
+        log.info("Creating DAO...");
+        this.accountDao = DaoManager.createDao(H2ConnectionFactory.getConnection(), BankAccount.class);
     }
 
     @Override

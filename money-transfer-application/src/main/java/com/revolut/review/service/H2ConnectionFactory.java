@@ -9,6 +9,10 @@ public class H2ConnectionFactory {
     private static final String DATABASE_URL = "jdbc:h2:mem:bank";
     private static ConnectionSource CONNECTION_SOURCE = null;
 
+    private H2ConnectionFactory() {
+        //
+    }
+
     public static synchronized ConnectionSource getConnection() throws SQLException {
         if (CONNECTION_SOURCE == null) {
             CONNECTION_SOURCE = new JdbcConnectionSource(DATABASE_URL);

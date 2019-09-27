@@ -6,13 +6,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
 @DatabaseTable(tableName = "bankAccounts")
 public class BankAccount {
-    @DatabaseField(id = true)
-    private String id;
+    @DatabaseField(generatedId = true)
+    private UUID id;
     @DatabaseField(columnName = "card_number")
     private String cardNumber;
     @DatabaseField
