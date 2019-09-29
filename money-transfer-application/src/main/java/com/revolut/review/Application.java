@@ -1,7 +1,6 @@
 package com.revolut.review;
 
 import com.revolut.review.model.BankAccount;
-import com.revolut.review.service.BankAccountRepository;
 import com.revolut.review.utils.H2DBUtils;
 import io.micronaut.runtime.Micronaut;
 import io.micronaut.runtime.event.annotation.EventListener;
@@ -37,7 +36,7 @@ public class Application {
         log.info("Creating bank_accounts table");
         h2DBUtils.createBankAccountTable();
         log.info("bank_accounts table is created");
-        Collection<BankAccount> accounts = IntStream.range(1000, 1999).mapToObj(i -> {
+        Collection<BankAccount> accounts = IntStream.range(1000, 2000).mapToObj(i -> {
             String cardNum = String.valueOf(i);
             Double balance = 1000.0;
             Date lastUpdatedDate = new Date();

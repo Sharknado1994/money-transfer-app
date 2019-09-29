@@ -8,7 +8,5 @@ import reactor.core.publisher.Mono;
 import java.sql.SQLException;
 
 public interface MoneyTransferService {
-    Maybe<OperationResult> executeCharge(String src, String trg, Double value) throws SQLException;
-
-    OperationResult executeWithdrawal(BankAccount src, BankAccount trg, Double value) throws Exception;
+    Maybe<OperationResult> executeCharge(String src, String trg, Double value) throws Exception;
 }

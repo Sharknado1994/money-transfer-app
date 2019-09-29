@@ -17,6 +17,6 @@ public class BankBusinessExceptionHandler implements ExceptionHandler<BankBusine
 
     @Override
     public HttpResponse handle(HttpRequest request, BankBusinessException exception) {
-        return HttpResponse.status(HttpStatus.UNPROCESSABLE_ENTITY, exception.getBusinessMessage());
+        return HttpResponse.status(HttpStatus.UNPROCESSABLE_ENTITY, exception.getBusinessMessage()).body(exception.getBusinessMessage());
     }
 }

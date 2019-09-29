@@ -14,44 +14,23 @@ import java.sql.SQLException;
 @Singleton
 @Slf4j
 public class MoneyTransferServiceImpl implements MoneyTransferService {
-    private final BankAccountRepository repository;
+    private final BankRepository bankRepository;
 
     @Inject
-    public MoneyTransferServiceImpl(BankAccountRepository repository) {
-        this.repository = repository;
+    public MoneyTransferServiceImpl(BankRepository bankRepository) {
+        this.bankRepository = bankRepository;
     }
 
     @Override
-    public Maybe<OperationResult> executeCharge(String src, String trg, Double value) throws SQLException {
+    public Maybe<OperationResult> executeCharge(String src, String trg, Double value) throws Exception {
         return Maybe.just(transactionLogic(src, trg, value));
     }
 
-    protected OperationResult transactionLogic(final String src, final String trg, final Double value) throws SQLException, RuntimeException {
-        return TransactionManager.callInTransaction(H2ConnectionFactory.getConnection(), () -> {
-            log.info("Execution blocking logic for {} {} {}", src, trg, value);
-            BankAccount srcAcc = repository.getAccountByCardNum(src);
-            long current = System.currentTimeMillis();
-            while (System.currentTimeMillis() - current < 10000) {
-                //sleep for testing
-            }
-            BankAccount trgAcc = repository.getAccountByCardNum(trg);
-            OperationResult result = executeWithdrawal(srcAcc, trgAcc, value);
-            log.info("Transaction is ended");
-            return result;
-        });
-    }
-
-    @Override
-    public OperationResult executeWithdrawal(BankAccount src, BankAccount trg, Double value) throws Exception {
-        Double srcBalance = src.getBalance();
-        if (srcBalance.compareTo(value) < 0) {
-            throw new BankBusinessException("Not enough money on account " + src + " for charge execution");
+    protected OperationResult transactionLogic(final String src, final String trg, final Double value) throws SQLException, ClassNotFoundException, BankBusinessException {
+        if (value < 0) {
+            return bankRepository.execute(trg, src, -value);
         } else {
-            src.setBalance(srcBalance - value);
-            trg.setBalance(trg.getBalance() + value);
-            repository.updateAccounts(src, trg);
-            return new OperationResult("Charge from " + src.getCardNumber() + " to " + trg.getCardNumber() + " is done" +
-                    "New balances [src " + src.getBalance() + " trg " + trg.getBalance() + " ]");
+            return bankRepository.execute(src, trg, value);
         }
     }
 }

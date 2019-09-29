@@ -1,8 +1,6 @@
 package com.revolut.review.rest;
 
-import com.revolut.review.model.BankAccount;
 import com.revolut.review.model.OperationResult;
-import com.revolut.review.service.BankAccountRepository;
 import com.revolut.review.service.MoneyTransferService;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
@@ -16,7 +14,6 @@ import reactor.util.function.Tuples;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotBlank;
-import java.sql.SQLException;
 
 @Controller()
 @Validated
