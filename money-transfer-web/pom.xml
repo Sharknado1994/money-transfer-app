@@ -11,6 +11,16 @@
     </parent>
 
     <artifactId>money-transfer-web</artifactId>
+    <packaging>jar</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.revolut.review</groupId>
+            <artifactId>money-transfer-api</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
 
 
 </project>

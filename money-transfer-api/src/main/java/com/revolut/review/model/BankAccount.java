@@ -10,7 +10,7 @@ import java.util.UUID;
 
 @Data
 @NoArgsConstructor
-@DatabaseTable(tableName = "bankAccounts")
+@DatabaseTable(tableName = "bank_accounts")
 public class BankAccount {
     @DatabaseField(generatedId = true)
     private UUID id;

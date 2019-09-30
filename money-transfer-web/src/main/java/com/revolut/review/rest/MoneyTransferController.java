@@ -26,7 +26,7 @@ public class MoneyTransferController {
         this.moneyTransferService = moneyTransferService;
     }
 
-    @Get(value = "/charge", produces = MediaType.TEXT_PLAIN)
+    @Get(value = "/charge", produces = MediaType.APPLICATION_JSON)
     public Maybe<OperationResult> executeCharge(@NotBlank @QueryValue(value = "src") String src,
                                        @NotBlank @QueryValue(value = "trg") String trg,
                                        @NotBlank @QueryValue(value = "val") String val) {
@@ -42,6 +42,11 @@ public class MoneyTransferController {
                                 .doOnSubscribe(l -> log.debug("Starting to execute charge for params {}", convertedParams))
                                 .doOnSuccess(operationResult -> log.info("Operation done with result {}", operationResult)));
 
+    }
+
+    @Get(value = "/balance", produces =  MediaType.APPLICATION_JSON)
+    public Maybe<OperationResult> getBalance(@NotBlank @QueryValue(value = "src") String src) throws Exception {
+        return moneyTransferService.getBalance(src);
     }
 
     protected Tuple3<String, String, Double> validateAndConvert(Tuple3<String, String, String> params) {

@@ -1,0 +1,17 @@
+micronaut:
+  application:
+    name: money-transfer-app
+  server:
+    port: 8080
+endpoints:
+  health:
+    enabled: true
+  beans:
+    enabled: true
+application:
+  h2:
+    db-url: jdbc:h2:mem:bank;LOCK_MODE=3;LOCK_TIMEOUT=60000;DB_CLOSE_ON_EXIT=TRUE
+    max-pool-size: 100
+    idle-time: 300
+    driver-class-name: org.h2.Driver
+    table-name: bank_accounts

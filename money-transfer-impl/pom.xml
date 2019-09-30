@@ -10,6 +10,16 @@
         <version>1.0.0-SNAPSHOT</version>
     </parent>
     <artifactId>money-transfer-impl</artifactId>
+    <packaging>jar</packaging>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.revolut.review</groupId>
+            <artifactId>money-transfer-api</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
 
 
 </project>
