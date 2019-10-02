@@ -44,11 +44,6 @@ public class MoneyTransferController {
 
     }
 
-    @Get(value = "/balance", produces =  MediaType.APPLICATION_JSON)
-    public Maybe<OperationResult> getBalance(@NotBlank @QueryValue(value = "src") String src) throws Exception {
-        return moneyTransferService.getBalance(src);
-    }
-
     protected Tuple3<String, String, Double> validateAndConvert(Tuple3<String, String, String> params) {
         String val = params.getT3();
         Double value = Double.parseDouble(val.replaceAll("[,]", "."));

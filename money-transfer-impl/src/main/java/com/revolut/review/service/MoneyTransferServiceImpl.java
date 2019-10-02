@@ -30,17 +30,6 @@ public class MoneyTransferServiceImpl implements MoneyTransferService {
     }
 
     @Override
-    public Maybe<OperationResult> getBalance(String src) throws Exception {
-        return Maybe.just(bankUtils.execute(new MoneyTransaction(src, null, null) {
-            @Override
-            public OperationResult executeWithinIsolatedTransaction() throws SQLException {
-                BankAccount account = getAccount(this.getSrc());
-                return new OperationResult(account.toString());
-            }
-        }));
-    }
-
-    @Override
     public boolean checkAccounts(BankAccount src, Double value) {
         return src.getBalance() >= value;
     }
