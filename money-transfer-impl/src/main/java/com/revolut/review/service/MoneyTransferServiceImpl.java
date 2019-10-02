@@ -1,6 +1,9 @@
 package com.revolut.review.service;
 
 import com.revolut.review.exception.BankBusinessException;
+import com.revolut.review.exception.CardsEqualException;
+import com.revolut.review.exception.NotEnoughMoneyException;
+import com.revolut.review.exception.NotValidCardException;
 import com.revolut.review.model.BankAccount;
 import com.revolut.review.model.OperationResult;
 import io.reactivex.Maybe;
@@ -54,25 +57,28 @@ public class MoneyTransferServiceImpl implements MoneyTransferService {
         return new MoneyTransaction(src, trg, value) {
             @Override
             public OperationResult executeWithinIsolatedTransaction() throws SQLException {
+                if (src.equals(trg)) {
+                    throw new CardsEqualException("Source and target card's numbers are equal to each other");
+                }
                 Map<String, BankAccount> accounts = getAccounts(src, trg, true);
                 if (accounts.get(src) == null) {
-                    throw new BankBusinessException(String.format("Card %s has invalid format", src));
+                    throw new NotValidCardException(String.format("Card %s has invalid format", src));
                 }
 
                 if (accounts.get(trg) == null) {
-                    throw new BankBusinessException(String.format("Card %s has invalid format", trg));
+                    throw new NotValidCardException(String.format("Card %s has invalid format", trg));
                 }
                 BankAccount srcAcc = accounts.get(this.getSrc());
                 BankAccount trgAcc = accounts.get(this.getTrg());
                 boolean valid = checkAccounts(srcAcc, this.getVal());
                 if (valid) {
-                    log.info("Params before execution: src {} bal {} trg {} bal {}", srcAcc.getCardNumber(), srcAcc.getBalance(), trgAcc.getCardNumber(),
-                            trgAcc.getBalance());
+                    log.info("Params before execution: src {} bal {} trg {} bal {} value {}", srcAcc.getCardNumber(), srcAcc.getBalance(), trgAcc.getCardNumber(),
+                            trgAcc.getBalance(), value);
                     updateBalances(this.getSrc(), srcAcc.getBalance() - this.getVal());
                     updateBalances(this.getTrg(), trgAcc.getBalance() + this.getVal());
                     return new OperationResult(String.format("Operation result: charge from src %s to trg %s is done", src, trg));
                 } else {
-                    throw new BankBusinessException("Not enough money for executing charging [number= " + srcAcc.getCardNumber() + "]");
+                    throw new NotEnoughMoneyException(String.format("Not enough money for executing charging [number= %s]", src));
                 }
             }
         };

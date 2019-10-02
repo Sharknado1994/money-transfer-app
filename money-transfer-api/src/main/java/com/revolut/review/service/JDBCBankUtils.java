@@ -16,4 +16,6 @@ public interface JDBCBankUtils {
     BankAccount getAccount(Connection connection, String cardNumber) throws SQLException;
 
     int updateBalances(Connection connection, String cardNum, Double newBal) throws SQLException;
+
+    Connection getConnectionFromPool() throws SQLException;
 }

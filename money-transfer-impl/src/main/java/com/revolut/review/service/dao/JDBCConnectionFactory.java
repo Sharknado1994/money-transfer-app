@@ -1,9 +1,8 @@
-package com.revolut.review.dao;
+package com.revolut.review.service.dao;
 
 import com.revolut.review.properties.ConnectionProperties;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import io.micronaut.context.annotation.Primary;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Inject;

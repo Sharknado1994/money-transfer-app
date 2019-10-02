@@ -1,4 +1,4 @@
-package com.revolut.review.rest;
+package com.revolut.review.service.rest;
 
 import com.revolut.review.model.OperationResult;
 import com.revolut.review.service.MoneyTransferService;

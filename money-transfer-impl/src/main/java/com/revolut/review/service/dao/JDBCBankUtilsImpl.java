@@ -1,4 +1,4 @@
-package com.revolut.review.dao;
+package com.revolut.review.service.dao;
 
 import com.revolut.review.exception.BankBusinessException;
 import com.revolut.review.model.BankAccount;
@@ -6,10 +6,10 @@ import com.revolut.review.model.OperationResult;
 import com.revolut.review.properties.ConnectionProperties;
 import com.revolut.review.service.JDBCBankUtils;
 import com.revolut.review.service.MoneyTransaction;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -24,7 +24,6 @@ public class JDBCBankUtilsImpl implements JDBCBankUtils {
     private final JDBCConnectionFactory connectionFactory;
     private final ConnectionProperties connectionProperties;
 
-    @Inject
     public JDBCBankUtilsImpl(JDBCConnectionFactory connectionFactory,
                              ConnectionProperties connectionProperties) {
         this.connectionFactory = connectionFactory;
@@ -33,7 +32,7 @@ public class JDBCBankUtilsImpl implements JDBCBankUtils {
 
     @Override
     public OperationResult execute(MoneyTransaction transaction) throws SQLException, BankBusinessException {
-        try (Connection connection = connectionFactory.getConnection()) {
+        try (Connection connection = getConnectionFromPool()) {
             connection.setAutoCommit(false);
             try  {
                 transaction.setConnection(connection);
@@ -99,5 +98,10 @@ public class JDBCBankUtilsImpl implements JDBCBankUtils {
         preparedStatement.setDouble(1, newBal);
         preparedStatement.setString(2, cardNum);
         return preparedStatement.executeUpdate();
+    }
+
+    @Override
+    public Connection getConnectionFromPool() throws SQLException {
+        return connectionFactory.getConnection();
     }
 }

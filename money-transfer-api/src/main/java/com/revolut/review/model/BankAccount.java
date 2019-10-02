@@ -18,6 +18,4 @@ public class BankAccount {
     private String cardNumber;
     @DatabaseField
     private Double balance;
-    @DatabaseField(columnName = "last_updated_date")
-    private Date lastUpdatedDate;
 }

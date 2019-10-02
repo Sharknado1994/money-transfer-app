@@ -7,7 +7,6 @@ import lombok.ToString;
 @AllArgsConstructor
 @Getter
 @ToString
-public class BankBusinessException extends RuntimeException {
+public abstract class BankBusinessException extends RuntimeException {
     private final String businessMessage;
-
 }

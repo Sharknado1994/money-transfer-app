@@ -1,8 +1,8 @@
-package com.revolut.review;
+package com.revolut.review.service;
 
 
 import com.revolut.review.model.BankAccount;
-import com.revolut.review.dao.H2DBUtils;
+import com.revolut.review.service.dao.H2DBUtils;
 import io.micronaut.runtime.Micronaut;
 import io.micronaut.runtime.event.annotation.EventListener;
 import io.micronaut.runtime.server.event.ServerStartupEvent;
@@ -36,11 +36,9 @@ public class Application {
         Collection<BankAccount> accounts = IntStream.range(1000, 2000).mapToObj(i -> {
             String cardNum = String.valueOf(i);
             Double balance = 1000.0;
-            Date lastUpdatedDate = new Date();
             BankAccount acc = new BankAccount();
             acc.setBalance(balance);
             acc.setCardNumber(cardNum);
-            acc.setLastUpdatedDate(lastUpdatedDate);
             return acc;
         }).collect(Collectors.toList());
         log.info("Inserting accounts");

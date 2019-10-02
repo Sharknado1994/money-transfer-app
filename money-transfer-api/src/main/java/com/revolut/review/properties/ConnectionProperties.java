@@ -1,8 +1,5 @@
 package com.revolut.review.properties;
 
-import io.micronaut.context.annotation.Bean;
-import io.micronaut.context.annotation.ConfigurationProperties;
-import io.micronaut.context.annotation.Property;
 import io.micronaut.context.annotation.Value;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;

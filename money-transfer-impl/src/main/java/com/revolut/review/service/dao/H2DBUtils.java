@@ -1,4 +1,4 @@
-package com.revolut.review.dao;
+package com.revolut.review.service.dao;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;

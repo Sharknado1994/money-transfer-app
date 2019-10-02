@@ -1,6 +1,5 @@
 package com.revolut.review.exception.handler;
 
-import com.revolut.review.exception.BankBusinessException;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
